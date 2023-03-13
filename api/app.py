@@ -5,9 +5,17 @@ app = FastAPI()
 
 #If file is small we can use file : bytes
 @app.post("/api/uploadLithology")
-async def uploadLithology(file : UploadFile):
+async def uploadLithology(file : UploadFile, pages : str):
     #TODO
-    return {"filename" : file.filename}
+    p = -1
+    if('-' in pages):
+        #multiple pages
+        p = [int(i) for i in pages.split('-')]
+    else:
+        #one page
+        p = int(pages)
+
+    return {"filename" : file.filename, "page": pages}
 
 @app.post("/api/extractColumn")
 async def extractColumn(x_min : int, y_min : int, x_max : int, y_max : int):
