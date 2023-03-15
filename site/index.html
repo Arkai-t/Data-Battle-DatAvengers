@@ -17,11 +17,21 @@
       </nav>
     </div>
 
+    <!--Spinner-->
+    <div id="waitSpinner" class="container visually-hidden">
+      <div class="card text-center">
+        <div class="card-body">
+          <div class="spinner-border text-primary" role="status">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!--Form-->
     <div id="form" class="container"> 
       <div class="card">
         <div class="card-body">
-          <form class="text-start" method="post" onsubmit="formSubmit(); return false;">
+          <form class="text-start" id="formStart" method="post" onsubmit="formSubmit(); return false;">
               <div class="mb-3">
                   <label for="fileUpload" class="form-label">Upload your completion report</label>
                   <input type="file" class="form-control" id="fileUpload" accept=".pdf,.PDF" required>
