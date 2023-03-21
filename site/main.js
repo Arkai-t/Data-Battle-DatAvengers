@@ -1,3 +1,13 @@
+function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
 function formSubmit() {
     //Add spinner
     document.querySelector('#form').classList.add('visually-hidden');
@@ -13,14 +23,15 @@ function formSubmit() {
     formData.append('pages', pages);
 
     let xhr = new XMLHttpRequest();
+    xhr.responseType = 'arraybuffer'
     xhr.onreadystatechange=()=>{
         //Wait for answer
-        if(xhr.readyState==XMLHttpRequest.DONE){ 
+        if(xhr.readyState==XMLHttpRequest.DONE){
+            document.getElementById('jcrop_target').setAttribute('src', ('data:image/png;base64,' + _arrayBufferToBase64(xhr.response)));
+
             //Update page
             document.querySelector('#waitSpinner').classList.add('visually-hidden');
             document.querySelector('#jcrop').classList.remove('visually-hidden');
-            //Remove width=0%
-            document.querySelector('.jcrop-image-stage').removeAttribute('style');
             //Update progress bar
             document.querySelector('.progress .progress-bar').setAttribute('style', 'width: 50%;');
             document.querySelector('#progress2').classList.remove('bg-secondary');

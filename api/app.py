@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Request    
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 from time import sleep
+
+from source.pdf import pdfToPng
 
 app = FastAPI()
 
@@ -28,11 +31,12 @@ async def uploadLithology(request : Request):
         p = [int(i) for i in pages.split('-')]
     else:
         #one page
-        p = int(pages)
+        p = int(pages)-1
 
-    sleep(1)
+    pdfToPng(file.file, p)
 
-    return {"filename" : file.filename, "page": pages}
+    #TODO change to a byteLike file
+    return FileResponse('./result.png', media_type='image/png')
 
 class ExtractColumn(BaseModel):
     x_min : int
