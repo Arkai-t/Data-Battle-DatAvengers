@@ -1,6 +1,8 @@
 import os
-from PyPDF2 import PdfWriter, PdfReader
+from PyPDF2 import PdfReader
 from PIL import Image
+import numpy as np
+from zipfile import ZipFile
 
 # Stolen form stackoverflow, fuze vertically images
 def _stich_tile(path_to_file, images, outputPath):
@@ -20,6 +22,12 @@ def _stich_tile(path_to_file, images, outputPath):
     new_image.save(outputPath)
     return new_image
 
+def _delete_img_folder(folder):
+    for filename in os.listdir(folder):
+        file = os.path.join(folder, filename)
+        if os.path.isfile(file):
+            os.remove(file)
+
 def pdfToPng(file, page : int):
     if  not os.path.exists("./img"):
         os.makedirs("./img")
@@ -36,10 +44,31 @@ def pdfToPng(file, page : int):
 
     img = _stich_tile('img', imgPaths, 'result.png')
 
-    # Delete temporary files
-    for filename in os.listdir('./img'):
-        file = os.path.join('./img', filename)
-        if os.path.isfile(file):
-            os.remove(file)
+    _delete_img_folder('./img')
 
     return img
+
+def dividePng(file, height : int):
+    img = Image.open(file)
+
+    np_img = np.array(img)
+
+    i = 0
+    while(True):
+        if ((i+1)*height) < img.height:
+            tmp = np_img[i*height:(i+1)*height, :]
+            tmp_img = Image.fromarray(tmp)
+            tmp_img.save(f'./img/result_{i}.png')
+        else:
+            tmp = np_img[i*height:img.height-1, :]
+            tmp_img = Image.fromarray(tmp)
+            tmp_img.save(f'./img/result_{i}.png')
+            break
+        i += 1
+    img.close()
+
+def zipMultiplePngs():
+    with ZipFile('./result.zip', 'w') as myzip:
+        for img in os.listdir('./img'):
+            myzip.write(f'./img/{img}')
+    _delete_img_folder('./img')

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 import os
 from time import sleep
 
-from source.pdf import pdfToPng
+from source.pdf import pdfToPng, dividePng, zipMultiplePngs
 
 app = FastAPI()
 
@@ -34,9 +34,11 @@ async def uploadLithology(request : Request):
         p = int(pages)-1
 
     pdfToPng(file.file, p)
+    dividePng('./result.png', 2000) # Set correct size for showing
+    zipMultiplePngs()
 
     #TODO change to a byteLike file
-    return FileResponse('./result.png', media_type='image/png')
+    return FileResponse('./result.zip', media_type='application/zip')
 
 class ExtractColumn(BaseModel):
     x_min : int
@@ -45,12 +47,10 @@ class ExtractColumn(BaseModel):
     y_max : int
 
 @app.post("/api/extractColumn")
-async def extractColumn(e : ExtractColumn):
+async def extractColumn(e : list[ExtractColumn]):
     #TODO
-    sleep(3)
-    return {'array': [e.x_min, e.y_min, e.x_max, e.y_max]}
+    return {'array': 'ça marche tqt'}
 
 @app.get("/api/lithology")
 async def getLithology():
-    sleep(3)
     return 0
