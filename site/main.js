@@ -1,17 +1,21 @@
 var images = new Array();
 var images_index = 0;
-var boxArray = new Array();
+var boxCrop = new Array();
 var stage = null;
 
-function _addJcrop(){
-    Jcrop.load('jcrop_target').then(img => {
-        stage = Jcrop.attach(img, {multi: false});
-    
-        //Set correct css position
-        document.querySelector('.jcrop-image-stage img').setAttribute('style', 'overflow: scroll; object-fit: contain;height: 34em;position: initial;');
-    });
+function _addCrop(){
+    document.getElementById('jcrop_target').onload = function() {
+        stage = new Cropper(document.getElementById('jcrop_target'), {
+            viewMode: 1,
+            dragMode: 'crop',
+            guides: false,
+            rotatable: false,
+            zoomable: false,
+            zoomOnTouch: false,
+            zoomOnWheel: false,
+        });
+    };
 }
-
 
 function _blobToPng(blob){
     return URL.createObjectURL(blob);
@@ -33,6 +37,20 @@ async function _extractZip(blob){
     images.sort((a, b) => {
         return (parseInt(a.name.slice(11, -4)) - parseInt(b.name.slice(11, -4)));
     })
+}
+
+async function _compressZip(){
+    const blobWriter = new zip.BlobWriter("application/zip");
+    const writer = new zip.ZipWriter(blobWriter);
+
+    for await (const img of boxCrop){
+        await writer.add(img.name, new zip.BlobReader(img.blob));
+    }
+
+    // close the ZipReader
+    await writer.close();
+    // get the zip file as a Blob
+    return await blobWriter.getData();
 }
 
 function formSubmit() {
@@ -62,6 +80,8 @@ function formSubmit() {
             //Update page
             document.querySelector('#waitSpinner').classList.add('visually-hidden');
             document.querySelector('#jcrop').classList.remove('visually-hidden');
+            document.getElementById('totalPages').innerHTML = (images.length);
+            document.getElementById('currentPage').innerHTML = 1;
             //Update progress bar
             document.querySelector('.progress .progress-bar').setAttribute('style', 'width: 50%;');
             document.querySelector('#progress2').classList.remove('bg-secondary');
@@ -77,59 +97,49 @@ function formSubmit() {
 
 function _changeImage(){
     //Check if last image
-    if(images_index >= (images.length -2)){
+    if(images_index >= (images.length -1)){
         document.querySelector('#buttonNext').classList.add('visually-hidden');
         document.querySelector('#buttonNoBox').classList.add('visually-hidden');
         document.querySelector('#buttonValidate').classList.remove('visually-hidden');
+        return;
     }
     //Next image
     images_index ++;
     document.getElementById('jcrop_target').setAttribute('src', images[images_index].img);
-    //TODO see to reset jcrop rectangle
+
+    document.getElementById('currentPage').innerHTML = (images_index+1)
+
+    //Redo jcrop
     stage.destroy()
-    _addJcrop()
+    _addCrop()
 }
 
 function noBox() {
-    boxArray.push({
-        'x_min': -1,
-        'y_min': -1,
-        'x_max': -1,
-        'y_max': -1,
-    });
-
     _changeImage()
 }
 
 function nextImage() {
-    //Check if rectangle
-    let rect = document.querySelector('.jcrop-widget');
-    if (rect == null)
-        return;
-
-    //Add box coordinates
-    let att = window.getComputedStyle(rect);
-    boxArray.push({
-        'x_min': parseInt(att.top.substring(0, att.top.length-2)),
-        'y_min': parseInt(att.left.substring(0, att.left.length-2)),
-        'x_max': parseInt(att.width.substring(0, att.width.length-2)),
-        'y_max': parseInt(att.height.substring(0, att.height.length-2))
+    //Convert cropped canvas to img
+    let canvas = stage.getCroppedCanvas();
+    canvas.toBlob((blob) =>{
+        //Add img
+        boxCrop.push({
+            name: images[images_index].name,
+            blob: (blob)
+        });
     });
     
     _changeImage()
 }
 
-function jcropSubmit(){
-    //Check if rectangle
-    let rect = document.querySelector('.jcrop-widget');
-    if (rect == null)
-        return;
-
-    let att = window.getComputedStyle(rect);
-
+async function jcropSubmit(){
     //Add spinner
     document.querySelector('#jcrop').classList.add('visually-hidden');
     document.querySelector('#waitSpinner').classList.remove('visually-hidden');
+
+    let zip = await _compressZip();
+    let formData = new FormData();
+    formData.append('file', zip);
 
     //Send crop to server
     let xhr = new XMLHttpRequest();
@@ -149,8 +159,5 @@ function jcropSubmit(){
     }
 
     xhr.open("POST", "http://127.0.0.1:8000/api/extractColumn", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(boxArray));
-
-    //@TODO Fix for multiple images to crop
+    xhr.send(formData);
 }

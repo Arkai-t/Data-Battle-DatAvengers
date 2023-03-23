@@ -4,8 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 from time import sleep
+import tempfile
 
-from source.pdf import pdfToPng, dividePng, zipMultiplePngs
+from source.pdf import pdfToPng, dividePng, zipMultiplePngs, extractCrop
 
 app = FastAPI()
 
@@ -40,15 +41,20 @@ async def uploadLithology(request : Request):
     #TODO change to a byteLike file
     return FileResponse('./result.zip', media_type='application/zip')
 
-class ExtractColumn(BaseModel):
-    x_min : int
-    y_min : int
-    x_max : int
-    y_max : int
-
 @app.post("/api/extractColumn")
-async def extractColumn(e : list[ExtractColumn]):
+async def extractColumn(request : Request):
     #TODO
+    file = await request.form()
+    zip = file['file']
+
+    # Convert SpooledTemporaryFile to something usable
+    with open('./result.zip', 'wb') as f:
+        content = zip.file.read()
+        f.write(content)
+    extractCrop('./result.zip')
+
+
+
     return {'array': 'ça marche tqt'}
 
 @app.get("/api/lithology")
