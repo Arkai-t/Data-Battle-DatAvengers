@@ -1,10 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import os
-from time import sleep
-import tempfile
 
 from source.pdf import pdfToPng, dividePng, zipMultiplePngs, extractCrop
 

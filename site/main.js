@@ -82,10 +82,6 @@ function formSubmit() {
             document.querySelector('#jcrop').classList.remove('visually-hidden');
             document.getElementById('totalPages').innerHTML = (images.length);
             document.getElementById('currentPage').innerHTML = 1;
-            //Update progress bar
-            document.querySelector('.progress .progress-bar').setAttribute('style', 'width: 50%;');
-            document.querySelector('#progress2').classList.remove('bg-secondary');
-            document.querySelector('#progress2').classList.add('bg-primary');
         }else{
             console.log("Waiting for answer");
         }
@@ -149,10 +145,32 @@ async function jcropSubmit(){
             //Update page
             document.querySelector('#waitSpinner').classList.add('visually-hidden');
             document.querySelector('#pieChart').classList.remove('visually-hidden');
-            //Update progress bar
-            document.querySelector('.progress .progress-bar').setAttribute('style', 'width: 100%;');
-            document.querySelector('#progress3').classList.remove('bg-secondary');
-            document.querySelector('#progress3').classList.add('bg-primary');
+
+            //Show pie chart
+            let example = {
+                Gravel : 0.4,
+                Clay : 0.2,
+                Sand : 0.3,
+                Coal : 0.07,
+                Mart : 0.03 
+            }
+            pieChart(example)
+
+            //Update warning
+            let accuraccy = 0.98*100;
+            let warningElem = document.getElementById('pie-chart-warning');
+            if(accuraccy >= 95.0){
+                warningElem.innerHTML = `${accuraccy}% of columns are detected !`;
+                warningElem.classList.add('bg-success');
+            }
+            else if(accuraccy >= 90.0){
+                warningElem.innerHTML = `Be careful with the results, only ${accuraccy}% of columns are detected !`;
+                warningElem.classList.add('bg-warning', 'text-dark');
+            }
+            else {
+                warningElem.innerHTML = `Be careful with the results, only ${accuraccy}% of columns are detected !`;
+                warningElem.classList.add('bg-danger');
+            }
         }else{
             console.log("Waiting for answer");
         }
@@ -160,4 +178,30 @@ async function jcropSubmit(){
 
     xhr.open("POST", "http://127.0.0.1:8000/api/extractColumn", true);
     xhr.send(formData);
+}
+
+function pieChart(data){
+    let materials = Object.keys(data)
+    let percents = Object.values(data)
+
+    const pieChart = new Chart(document.getElementById("pie-chart"), {
+        type: 'pie',
+        responsive:true,
+        data: {
+        labels: materials,
+            datasets: [{
+                label: "Distribution",
+                backgroundColor: ["#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6", "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11", "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"],
+                data: percents
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Distribution'
+            }
+        }
+    });
+
+    document.getElementById('pie-chart').setAttribute('style', 'display: box; max-width:37em; max-height:37em')
 }

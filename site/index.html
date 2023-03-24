@@ -47,14 +47,13 @@
     <!--Jcrop-->
     <div id="jcrop" class="container visually-hidden">
       <div class="card">
-        <div class="card-body text-center">
+        <div class="card-body text-center" style="padding: unset;">
           <img id="jcrop_target" src="" class="card-img-top" style="height: 34em;max-width: 100%;display: block;">
         </div>
         <div class="card-footer text-center p-2">
-          <button class="btn btn-primary" onclick="nextImage()" id="buttonNext">Next</button>
           <button class="btn btn-primary" onclick="noBox()" id="buttonNoBox">No boxes</button>
-          <!--Add visually-hidden when test are finished-->
-          <button class="btn btn-primary" onclick="jcropSubmit()" id="buttonValidate">Validate</button>
+          <button class="btn btn-primary" onclick="nextImage()" id="buttonNext">Next</button>
+          <button class="btn btn-primary " onclick="jcropSubmit()" idid="buttonValidate">Validate</button>
           <span class="badge rounded-pill bg-light text-dark text-end" style="float: inline-end;">
             <span id="currentPage">
             </span>
@@ -70,25 +69,18 @@
     <div id="pieChart" class="container visually-hidden">
       <div class="card">
         <div class="card-body text-center">
-          <img src="https://www.tibco.com/sites/tibco/files/media_entity/2022-01/PieChart-01.svg">
+          <div class="">
+            <canvas id="pie-chart" width="34em" height="34em"></canvas>
+          </div>
+        </div>
+        <div class="card-footer text-center">
+          <span id="pie-chart-warning" class="badge rounded-pill"></span>
         </div>
       </div>
     </div>
-    
-    <div class="container fixed-bottom visually-hidden">
-      <!--Progress bar-->
-      <div class="container p-3">
-        <div class="position-relative m-4">
-          <div class="progress" style="height: 1px;">
-            <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
-          <span id="progress1" class="position-absolute top-0 start-0 translate-middle badge bg-primary rounded-pill" style="width: 2rem; height:2rem;">1</span>
-          <span id="progress2" class="position-absolute top-0 start-50 translate-middle badge bg-secondary rounded-pill" style="width: 2rem; height:2rem;">2</span>
-          <span id="progress3" class="position-absolute top-0 start-100 translate-middle badge bg-secondary rounded-pill" style="width: 2rem; height:2rem;">3</span>
-        </div>
-      </div>
-      
-      <!--Footer-->
+
+    <!--Footer-->
+    <div class="container fixed-bottom">      
       <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-1 border-top">
         <div class="col-md-4 d-flex align-items-center">
           <span class="text-muted">Data Battle 2023 - DatAvengers</span>
@@ -110,6 +102,7 @@
     </div>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
   <script type="text/javascript" src="./zip.min.js"></script>
   <link  href="./cropper.min.css" rel="stylesheet">
   <script src="./cropper.min.js"></script>
