@@ -21,7 +21,7 @@ async def uploadLithology(request : Request):
     pages = form['pages']
     file = form['file']
 
-    #TODO
+    #@TODO currently process only 1 page/see if it's needed for more than 1 page
     p = -1
     if('-' in pages):
         #multiple pages
@@ -34,12 +34,10 @@ async def uploadLithology(request : Request):
     dividePng('./result.png', 2000) # Set correct size for showing
     zipMultiplePngs()
 
-    #TODO change to a byteLike file
     return FileResponse('./result.zip', media_type='application/zip')
 
 @app.post("/api/extractColumn")
 async def extractColumn(request : Request):
-    #TODO
     file = await request.form()
     zip = file['file']
 
@@ -49,6 +47,7 @@ async def extractColumn(request : Request):
         f.write(content)
     extractCrop('./result.zip')
 
+    #@TODO model process + result process + send/store data
 
 
     return {'array': 'ça marche tqt'}

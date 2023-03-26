@@ -146,6 +146,9 @@ async function jcropSubmit(){
             document.querySelector('#waitSpinner').classList.add('visually-hidden');
             document.querySelector('#pieChart').classList.remove('visually-hidden');
 
+            //@TODO get and process data
+            let data = JSON.parse(xhr.responseText);
+
             //Show pie chart
             let example = {
                 Gravel : 0.4,
