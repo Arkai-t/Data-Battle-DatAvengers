@@ -4,6 +4,8 @@ from PIL import Image
 import numpy as np
 from zipfile import ZipFile
 
+Image.MAX_IMAGE_PIXELS = 933120000
+
 # Stolen form stackoverflow, fuze vertically images
 def _stich_tile(path_to_file, images, outputPath):
     sq_y = len(images)
