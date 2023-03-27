@@ -160,7 +160,7 @@ async function jcropSubmit(){
             pieChart(example)
 
             //Update warning
-            let accuraccy = 0.98*100;
+            let accuraccy = 0.89*100;
             let warningElem = document.getElementById('pie-chart-warning');
             if(accuraccy >= 95.0){
                 warningElem.innerHTML = `${accuraccy}% of columns are detected !`;

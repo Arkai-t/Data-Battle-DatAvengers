@@ -3,3 +3,4 @@ uvicorn
 pandas
 PyPDF2
 zipfile
+ultralytics
