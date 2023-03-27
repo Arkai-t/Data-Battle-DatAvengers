@@ -28,7 +28,7 @@ async function _extractZip(blob){
     if (entries.length) {
 
         for await (const e of entries) {
-            let tmp = await e.getData(new zip.BlobWriter())
+            let tmp = await e.getData(new zip.BlobWriter());
             images.push({'name': e.filename, 'img': _blobToPng(tmp)});
         }
     }
@@ -103,15 +103,15 @@ function _changeImage(){
     images_index ++;
     document.getElementById('jcrop_target').setAttribute('src', images[images_index].img);
 
-    document.getElementById('currentPage').innerHTML = (images_index+1)
+    document.getElementById('currentPage').innerHTML = (images_index+1);
 
     //Redo jcrop
-    stage.destroy()
-    _addCrop()
+    stage.destroy();
+    _addCrop();
 }
 
 function noBox() {
-    _changeImage()
+    _changeImage();
 }
 
 function nextImage() {
@@ -125,7 +125,7 @@ function nextImage() {
         });
     });
     
-    _changeImage()
+    _changeImage();
 }
 
 async function jcropSubmit(){
@@ -148,16 +148,9 @@ async function jcropSubmit(){
 
             //@TODO get and process data
             let data = JSON.parse(xhr.responseText);
-
+            
             //Show pie chart
-            let example = {
-                Gravel : 0.4,
-                Clay : 0.2,
-                Sand : 0.3,
-                Coal : 0.07,
-                Mart : 0.03 
-            }
-            pieChart(example)
+            pieChart(data);
 
             //Update warning
             let accuraccy = 0.89*100;
@@ -184,8 +177,8 @@ async function jcropSubmit(){
 }
 
 function pieChart(data){
-    let materials = Object.keys(data)
-    let percents = Object.values(data)
+    let materials = Object.keys(Object.values(Object.values(data)[0])[0]);
+    let percents = Object.values(Object.values(Object.values(data)[0])[0]);
 
     const pieChart = new Chart(document.getElementById("pie-chart"), {
         type: 'pie',
@@ -206,5 +199,5 @@ function pieChart(data){
         }
     });
 
-    document.getElementById('pie-chart').setAttribute('style', 'display: box; max-width:37em; max-height:37em')
+    document.getElementById('pie-chart').setAttribute('style', 'display: box; max-width:37em; max-height:37em');
 }

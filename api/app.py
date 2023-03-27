@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -49,8 +50,22 @@ async def extractColumn(request : Request):
 
     #@TODO model process + result process + send/store data
 
+    # for example, with "source/layers/layer_1.json" like that :
+    #
+    # {
+    #     "layer_1": {
+    #         "proportions": {
+    #             "clay": 0.5,
+    #             "iron": 0.1,
+    #             "bronze": 0.3
+    #         }
+    #     }
+    # }
 
-    return {'array': 'ça marche tqt'}
+    with open("source/layers/layer_1.json", "r") as f_json:
+        json_content = json.load(f_json)
+    
+    return json_content
 
 @app.get("/api/lithology")
 async def getLithology():
