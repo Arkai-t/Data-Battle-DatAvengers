@@ -3,8 +3,11 @@ import os
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+
 from source.pdf import pdfToPng, dividePng, zipMultiplePngs, extractCrop
 from source.model import YOLOModel
+from source.FindID import IdSearcher
+from source.Scraper import Scraper
 
 app = FastAPI()
 
@@ -32,6 +35,9 @@ async def uploadLithology(request : Request):
         #one page
         p = int(pages)-1
 
+    global filename 
+    filename = file.filename
+
     pdfToPng(file.file, p)
     dividePng('./result.png', 2000) # Set correct size for showing
     zipMultiplePngs()
@@ -56,7 +62,18 @@ async def extractColumn(request : Request):
         res.append(model.predict(f'./img/{img}'))
 
     #@TODO result process + send/store data
-    
+
+
+    #Scrap
+    id = '/'.join(filename.split('_')[0:2])
+    dict_id = IdSearcher(f"https://factpages.npd.no/en/wellbore/PageView/With/Wdss").getDict()
+    '''
+    scrap_height example
+    {
+        'name_litho': 'height'
+    }
+    '''
+    scrap_height = Scraper(dict_id[id]).getDict()
 
 
     # for example, with "source/layers/layer_1.json" like that :

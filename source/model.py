@@ -11,4 +11,8 @@ class YOLOModel:
     def predict(self, png):
         res = self.model(png)
 
-        return {'boxes': res[0].boxes.xywh, 'conf': res[0].probs}
+        # Convert res tensors to numpy arrays
+        return {'boxes': res[0].boxes.xywh.cpu().detach().numpy(), 
+                'cls': res[0].boxes.xywh.cpu().detach().numpy(),
+                'conf': res[0].boxes.conf.cpu().detach().numpy()
+               }
