@@ -16,5 +16,5 @@ class Scraper:
             results = self.formations[i].find_all("div")
             top = results[1].text
             name = results[3].text
-            d[i] = {'name':name, 'top': int(top)}
+            d.append({'name':name, 'top': int(top)})
         return d

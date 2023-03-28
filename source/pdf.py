@@ -80,4 +80,8 @@ def extractCrop(zip):
     _delete_img_folder('./img')
     #Extract zip
     with ZipFile(zip, 'r') as z:
-        z.extractall('./img')
+        z.extractall('.')
+        #Bad way to do it : replace the current img folder
+
+def getImageHeigt(img_path):
+    return Image.open(img_path).height

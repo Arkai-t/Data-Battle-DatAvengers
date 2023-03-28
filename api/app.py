@@ -4,10 +4,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from source.pdf import pdfToPng, dividePng, zipMultiplePngs, extractCrop
+from source.pdf import pdfToPng, dividePng, zipMultiplePngs, extractCrop, getImageHeigt
 from source.model import YOLOModel
 from source.FindID import IdSearcher
 from source.Scraper import Scraper
+from source.splitter import post_process, resolve_superposition_proba, cutByLitho
 
 app = FastAPI()
 
@@ -57,12 +58,30 @@ async def extractColumn(request : Request):
 
     # Model process
     model = YOLOModel()
-    res = []
+    res_arr = []
     for img in os.listdir('./img'):
-        res.append(model.predict(f'./img/{img}'))
+        pred = model.predict(f'./img/{img}')
+        img_size = getImageHeigt(f'./img/{img}')
 
-    #@TODO result process + send/store data
+        res = post_process(resolve_superposition_proba(
+                        pred['boxes'],
+                        pred['prob'],
+                        pred['cls'],
+                        0.5,
+                        img_size
+        ))
+        res_arr.append(res)
 
+    # Merge arrays
+    merged_arr = []
+    y_end = 0
+    for res in res_arr:
+        for line in res:
+            line['y_start'] += y_end
+            line['y_end'] += y_end
+            merged_arr.append(line)
+        
+        y_end = res[-1]['y_end']
 
     #Scrap
     id = '/'.join(filename.split('_')[0:2])
@@ -75,6 +94,9 @@ async def extractColumn(request : Request):
     }
     '''
     scrap_height = Scraper(dict_id[id]).getLitho()
+
+    # Split by litho
+    cutByLitho(merged_arr, scrap_height)
 
     '''
     with "source/layers/layer_1.json" like that :
