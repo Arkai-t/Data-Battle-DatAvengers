@@ -70,12 +70,26 @@
     <div id="pieChart" class="container visually-hidden">
       <div class="card">
         <div class="card-body text-center">
+          <select id="select" onChange="pieChart(this.value);" class="form-select">
+          </select>
           <div class="">
             <canvas id="pie-chart" width="34em" height="34em"></canvas>
           </div>
         </div>
-        <div class="card-footer text-center">
+        <div class="card-footer text-center visually-hidden">
           <span id="pie-chart-warning" class="badge rounded-pill"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div id="error" class="container visually-hidden" style="justify-content: center;display: flex;"> 
+      <div class="card">
+        <div class="card-body" style="text-align: center;">
+          <div class="alert alert-danger" role="alert">
+            An error has been triggered!
+          </div>
+          <a href="index.html" class="link-secondary">Back home</a>
         </div>
       </div>
     </div>

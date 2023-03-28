@@ -77,7 +77,6 @@ def zipMultiplePngs():
     _delete_img_folder('./img')
 
 def extractCrop(zip):
-    _delete_img_folder('./img')
     #Extract zip
     with ZipFile(zip, 'r') as z:
         z.extractall('.')

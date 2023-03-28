@@ -2,6 +2,7 @@ var images = new Array();
 var images_index = 0;
 var boxCrop = new Array();
 var stage = null;
+var pie_chart_data = null;
 
 function _addCrop(){
     document.getElementById('jcrop_target').onload = function() {
@@ -86,6 +87,11 @@ function formSubmit() {
             console.log("Waiting for answer");
         }
     }
+    xhr.onerror = async () => {
+        console.log("Ca a plante !");
+        document.querySelector('#waitSpinner').classList.add('visually-hidden');
+        document.querySelector('#error').classList.remove('visually-hidden');
+    }
 
     xhr.open("POST", "http://127.0.0.1:8000/api/uploadLithology", true);
     xhr.send(formData);    
@@ -147,10 +153,18 @@ async function jcropSubmit(){
             document.querySelector('#pieChart').classList.remove('visually-hidden');
 
             //@TODO get and process data
-            let data = JSON.parse(xhr.responseText);
-            
+            pie_chart_data = JSON.parse(xhr.responseText);
+
+            let select = document.getElementById('select');
+            for (let i = 0; i < pie_chart_data.length; i++) {                
+                let opt = document.createElement('option');
+                opt.value = i;
+                opt.text = pie_chart_data[i].name;
+                select.add(opt, null)
+            }
+
             //Show pie chart
-            pieChart(data);
+            pieChart(0);
 
             //Update warning
             let accuraccy = 0.89*100;
@@ -171,12 +185,18 @@ async function jcropSubmit(){
             console.log("Waiting for answer");
         }
     }
+    xhr.onerror = async () => {
+        console.log("Ca a plante !");
+        document.querySelector('#waitSpinner').classList.add('visually-hidden');
+        document.querySelector('#error').classList.remove('visually-hidden');
+    }
 
     xhr.open("POST", "http://127.0.0.1:8000/api/extractColumn", true);
     xhr.send(formData);
 }
 
-function pieChart(data){
+function pieChart(index){
+    let data = pie_chart_data[index];
     let materials = Object.keys(Object.values(Object.values(data)[0])[0]);
     let percents = Object.values(Object.values(Object.values(data)[0])[0]);
 

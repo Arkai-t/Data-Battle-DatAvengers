@@ -1,4 +1,3 @@
-import json
 import os
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
@@ -9,6 +8,8 @@ from source.model import YOLOModel
 from source.FindID import IdSearcher
 from source.Scraper import Scraper
 from source.splitter import post_process, resolve_superposition_proba, cutByLitho
+
+from time import sleep
 
 app = FastAPI()
 
@@ -57,11 +58,14 @@ async def extractColumn(request : Request):
     extractCrop('./result.zip')
 
     # Model process
+    total_height = 0
     model = YOLOModel()
     res_arr = []
     for img in os.listdir('./img'):
+        print(img)
         pred = model.predict(f'./img/{img}')
         img_size = getImageHeigt(f'./img/{img}')
+        total_height += img_size
 
         res = post_process(resolve_superposition_proba(
                         pred['boxes'],
@@ -96,24 +100,9 @@ async def extractColumn(request : Request):
     scrap_height = Scraper(dict_id[id]).getLitho()
 
     # Split by litho
-    cutByLitho(merged_arr, scrap_height)
+    litho_prop = cutByLitho(merged_arr, scrap_height, total_height)
 
-    '''
-    with "source/layers/layer_1.json" like that :
-    {
-        "layer_1_name": {
-            "proportions": {
-                "mat": 0.5,
-                ...
-            }
-        }
-    }
-    '''
-
-    with open("source/layers/layer_1.json", "r") as f_json:
-        json_content = json.load(f_json)
-    
-    return json_content
+    return litho_prop
 
 @app.get("/api/lithology")
 async def getLithology():
