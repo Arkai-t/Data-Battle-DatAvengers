@@ -10,11 +10,11 @@ class Scraper:
         body = litho.find('tbody')
         self.formations = body.find_all('tr')
     
-    def getDict(self)->dict :
-        d = {}
+    def getLitho(self)->dict :
+        d = []
         for i in range(len(self.formations)):
             results = self.formations[i].find_all("div")
             top = results[1].text
             name = results[3].text
-            d[name] = int(top)
+            d[i] = {'name':name, 'top': int(top)}
         return d

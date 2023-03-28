@@ -70,23 +70,23 @@ async def extractColumn(request : Request):
     '''
     scrap_height example
     {
-        'name_litho': 'height'
+        'name_litho': 'height',
+        ...
     }
     '''
-    scrap_height = Scraper(dict_id[id]).getDict()
+    scrap_height = Scraper(dict_id[id]).getLitho()
 
-
-    # for example, with "source/layers/layer_1.json" like that :
-    #
-    # {
-    #     "layer_1": {
-    #         "proportions": {
-    #             "clay": 0.5,
-    #             "iron": 0.1,
-    #             "bronze": 0.3
-    #         }
-    #     }
-    # }
+    '''
+    with "source/layers/layer_1.json" like that :
+    {
+        "layer_1_name": {
+            "proportions": {
+                "mat": 0.5,
+                ...
+            }
+        }
+    }
+    '''
 
     with open("source/layers/layer_1.json", "r") as f_json:
         json_content = json.load(f_json)
