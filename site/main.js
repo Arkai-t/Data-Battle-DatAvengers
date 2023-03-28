@@ -196,9 +196,10 @@ async function jcropSubmit(){
 }
 
 function pieChart(index){
-    let data = pie_chart_data[index];
-    let materials = Object.keys(Object.values(Object.values(data)[0])[0]);
-    let percents = Object.values(Object.values(Object.values(data)[0])[0]);
+    console.log(index)
+
+    let materials = pie_chart_data[index].litho.map(a => a.class);
+    let percents = pie_chart_data[index].litho.map(a => a.prop);
 
     const pieChart = new Chart(document.getElementById("pie-chart"), {
         type: 'pie',

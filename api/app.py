@@ -62,7 +62,6 @@ async def extractColumn(request : Request):
     model = YOLOModel()
     res_arr = []
     for img in os.listdir('./img'):
-        print(img)
         pred = model.predict(f'./img/{img}')
         img_size = getImageHeigt(f'./img/{img}')
         total_height += img_size
@@ -98,6 +97,10 @@ async def extractColumn(request : Request):
     }
     '''
     scrap_height = Scraper(dict_id[id]).getLitho()
+
+    print(merged_arr)
+    print("\n###################\n")
+    print(scrap_height)
 
     # Split by litho
     litho_prop = cutByLitho(merged_arr, scrap_height, total_height)
