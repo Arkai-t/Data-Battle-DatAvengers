@@ -1,9 +1,10 @@
 import json
+import os
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-
 from source.pdf import pdfToPng, dividePng, zipMultiplePngs, extractCrop
+from source.model import YOLOModel
 
 app = FastAPI()
 
@@ -48,7 +49,15 @@ async def extractColumn(request : Request):
         f.write(content)
     extractCrop('./result.zip')
 
-    #@TODO model process + result process + send/store data
+    # Model process
+    model = YOLOModel()
+    res = []
+    for img in os.listdir('./img'):
+        res.append(model.predict(f'./img/{img}'))
+
+    #@TODO result process + send/store data
+    
+
 
     # for example, with "source/layers/layer_1.json" like that :
     #
