@@ -58,13 +58,11 @@ async def extractColumn(request : Request):
     extractCrop('./result.zip')
 
     # Model process
-    total_height = 0
     model = YOLOModel()
     res_arr = []
     for img in os.listdir('./img'):
         pred = model.predict(f'./img/{img}')
         img_size = getImageHeigt(f'./img/{img}')
-        total_height += img_size
 
         res = post_process(resolve_superposition_proba(
                         pred['boxes'],
@@ -98,12 +96,8 @@ async def extractColumn(request : Request):
     '''
     scrap_height = Scraper(dict_id[id]).getLitho()
 
-    print(merged_arr)
-    print("\n###################\n")
-    print(scrap_height)
-
     # Split by litho
-    litho_prop = cutByLitho(merged_arr, scrap_height, total_height)
+    litho_prop = cutByLitho(merged_arr, scrap_height)
 
     return litho_prop
 

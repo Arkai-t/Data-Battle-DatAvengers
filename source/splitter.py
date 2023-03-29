@@ -52,7 +52,8 @@ def post_process(cls_pixels):
 
     return clean_tab
 
-def cutByLitho(arr, litho, pixel_height):
+def cutByLitho(arr, litho):
+    pixel_height = max(arr, key=lambda x:x['y_end'])['y_end']
     litho_height = litho[-1]['top'] - litho[0]['top']
     start_litho = litho[0]['top'] 
 
@@ -60,7 +61,6 @@ def cutByLitho(arr, litho, pixel_height):
     splitted_litho = None
     index_pixel = 0 
     for index_litho in range(0, len(litho)-1):
-        print(index_litho)
         #cross product to get the split height in pixel
         limit_litho = litho[index_litho+1]['top'] - start_litho
         limit_pixel = (limit_litho*pixel_height)/litho_height
@@ -72,14 +72,9 @@ def cutByLitho(arr, litho, pixel_height):
         if splitted_litho:
             new_litho.append(splitted_litho)
 
-        print(f"BEFORE WHILE idx: {index_pixel}\tlim: {limit_pixel}\tpix: {arr[index_pixel]['y_end']}")
         while(arr[index_pixel]['y_end'] < limit_pixel):
             new_litho.append({'height': arr[index_pixel]['y_end'] - arr[index_pixel]['y_start'], 
                             'class': arr[index_pixel]['class']})
-            if(len(arr) - index_pixel <5):
-                print(f"idx: {index_pixel}\tlim: {limit_pixel}\tpix: {arr[index_pixel]['y_end']}")
-                print(len(arr))
-                print()
             index_pixel += 1
 
         # Case where mat is split between 2 litho
