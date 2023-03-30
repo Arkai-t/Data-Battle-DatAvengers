@@ -164,7 +164,7 @@ async function jcropSubmit(){
             }
 
             //Show pie chart
-            pieChart(0);
+            printPieChart(0);
 
             //Update warning
             let accuraccy = 0.89*100;
@@ -195,13 +195,19 @@ async function jcropSubmit(){
     xhr.send(formData);
 }
 
-function pieChart(index){
+let pieChart = null;
+
+function printPieChart(index){
     console.log(index)
 
     let materials = pie_chart_data[index].litho.map(a => a.class);
     let percents = pie_chart_data[index].litho.map(a => a.prop);
 
-    const pieChart = new Chart(document.getElementById("pie-chart"), {
+    if (pieChart != null){
+        pieChart.destroy();
+    }
+    
+    pieChart = new Chart(document.getElementById("pie-chart"), {
         type: 'pie',
         responsive:true,
         data: {
