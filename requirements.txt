@@ -4,3 +4,4 @@ pandas
 PyPDF2
 ultralytics
 beautifulsoup4
+codecarbon
