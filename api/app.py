@@ -9,7 +9,7 @@ from source.FindID import IdSearcher
 from source.Scraper import Scraper
 from source.splitter import post_process, resolve_superposition_proba, cutByLitho
 
-from time import sleep
+from codecarbon import track_emissions
 
 app = FastAPI()
 
@@ -22,6 +22,7 @@ app.add_middleware(
 )
 
 #Using https://stackoverflow.com/questions/64857459/issue-when-trying-to-send-pdf-file-to-fastapi-through-xmlhttprequest
+@track_emissions()
 @app.post("/api/uploadLithology")
 async def uploadLithology(request : Request):
     form = await request.form()
@@ -46,6 +47,7 @@ async def uploadLithology(request : Request):
 
     return FileResponse('./result.zip', media_type='application/zip')
 
+@track_emissions()
 @app.post("/api/extractColumn")
 async def extractColumn(request : Request):
     file = await request.form()
